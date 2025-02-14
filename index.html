@@ -166,26 +166,19 @@
             text-align: center;
             margin: 20px;
         }
-        /* <!-- 新增音乐样式 --> */
-        #valentine-music {
-            display: none; /* 隐藏音频控件 */
-        }
+
       
     </style>
 </head>
 <body>
-   <!-- 新增音乐元素 -->
-   <div id="valentine-modal" class="modal">
-    <audio id="valentine-music" loop>
-        <source src="https://cdn.example.com/romantic_music.mp3" type="audio/mpeg">
-        <!-- 您的浏览器不支持音频元素 -->
-    </audio>
-    <span class="close-btn">&times;</span>
-    <div class="modal-content">
-        <div id="valentine-text">情人节快乐喔~💖</div>
-        <canvas id="pinkboard" width="800" height="600"></canvas>
+    <!-- 新增情人节弹窗 -->
+    <div id="valentine-modal" class="modal">
+        <span class="close-btn">&times;</span>
+        <div class="modal-content">
+            <div id="valentine-text">哥哥，情人节快乐喔~💖</div>
+            <canvas id="pinkboard" width="800" height="600"></canvas>
+        </div>
     </div>
-</div>
 
 
     <h3>哥哥的班表💕</h3>
@@ -202,44 +195,26 @@
 
     <script>
 
-         // 修改后的日期检查逻辑
-         function checkValentineDay() {
+          // 新增情人节弹窗控制逻辑
+          function checkValentineDay() {
             const today = new Date();
-            const valentine = new Date(2025, 1, 14); // 月份从0开始
-            
-            // 检查是否在情人节当天
-            if (today >= valentine && today <= new Date(2025, 1, 15)) {
+            // 检查是否是2025年2月14日或之后
+            if (today.getFullYear() === 2025 && 
+                today.getMonth() === 1 && 
+                today.getDate() === 14) {
                 showModal();
-                // 添加页面点击监听（用于解决浏览器自动播放限制）
-                document.addEventListener('click', function autoPlay() {
-                    document.getElementById('valentine-music').play();
-                    document.removeEventListener('click', autoPlay);
-                });
             }
         }
 
-      // 修改后的弹窗控制函数
-      function showModal() {
+        function showModal() {
             const modal = document.getElementById('valentine-modal');
-            const music = document.getElementById('valentine-music');
-            
             modal.style.display = 'flex';
-            // 处理浏览器自动播放限制
-            music.play().catch(error => {
-                console.log('需要用户交互后自动播放');
-                document.addEventListener('click', () => music.play(), { once: true });
-            });
         }
 
         function closeModal() {
             const modal = document.getElementById('valentine-modal');
-            const music = document.getElementById('valentine-music');
-            
             modal.style.display = 'none';
-            music.pause();
-            music.currentTime = 0; // 重置播放进度
         }
-
 
         // 绑定关闭事件
         document.querySelector('.close-btn').addEventListener('click', closeModal);
@@ -275,8 +250,7 @@
             '除夕': ["除夕守岁不在家要视频连线哦！等哥哥回家吃年夜饭🏮", "爆竹声中一岁除，哥哥又老一岁啦😝"],
             '春节': ["春节快乐！给我哥哥拜年啦🧧 恭喜发财红包拿来", "新年要更爱你的老婆哦！恭喜发财红包拿来💰"],
             '元宵节': ["元宵节要吃甜甜的汤圆，得大大的元宝💋", "花灯再美也比不上哥哥的眼睛✨"],
-            '情人节': ["情人节快乐喔~ 哥哥，愿我们岁晚青山路，白首期同归✨", "情人节快乐喔~ 哥哥，愿我们岁晚青山路，白首期同归✨"],
-            '清明节': ["清明时节雨纷纷，你接下一句👩❤️💋👨", "出去踏青赏花把，希望是个好天气呢🌸"],
+            '情人节': ["情人节快乐喔~ 哥哥，愿我们岁晚青山路，白首期同归✨", "情人节快乐喔~ 哥哥，愿我们岁晚青山路，白首期同归✨"],            '清明节': ["清明时节雨纷纷，你接下一句👩❤️💋👨", "出去踏青赏花把，希望是个好天气呢🌸"],
             '劳动节': ["劳动最光荣！但今天要好好休息呀💆♂️", "五一假期带我出去玩吧🎡"],
             '纪念日': [`在一起第${Math.floor((new Date() - new Date("2020-05-20")) / 86400000)}天啦～💕,今天的我们是不是去领证了呢，哇喔~ 一直幸福下去`],
             '端午节': ["今天该吃甜甜的粽子啦，上夜班的哥哥今天也要吃粽子喔🎋", "端午节啦，可惜今天要上夜班，留我在家默默过节🩹"],
