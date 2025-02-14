@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HJF-奋斗日历</title>
+    <title>奋斗日历</title>
     <style>
         /* 样式部分保持不变 */
         @keyframes pulse {
@@ -166,19 +166,26 @@
             text-align: center;
             margin: 20px;
         }
-
+        /* <!-- 新增音乐样式 --> */
+        #valentine-music {
+            display: none; /* 隐藏音频控件 */
+        }
       
     </style>
 </head>
 <body>
-    <!-- 新增情人节弹窗 -->
-    <div id="valentine-modal" class="modal">
-        <span class="close-btn">&times;</span>
-        <div class="modal-content">
-            <div id="valentine-text">哥哥，情人节快乐喔~💖</div>
-            <canvas id="pinkboard" width="800" height="600"></canvas>
-        </div>
+   <!-- 新增音乐元素 -->
+   <div id="valentine-modal" class="modal">
+    <audio id="valentine-music" loop>
+        <source src="https://cdn.example.com/romantic_music.mp3" type="audio/mpeg">
+        您的浏览器不支持音频元素
+    </audio>
+    <span class="close-btn">&times;</span>
+    <div class="modal-content">
+        <div id="valentine-text">哥哥，情人节快乐喔~💖</div>
+        <canvas id="pinkboard" width="800" height="600"></canvas>
     </div>
+</div>
 
 
     <h3>哥哥的班表💕</h3>
@@ -195,26 +202,44 @@
 
     <script>
 
-          // 新增情人节弹窗控制逻辑
-          function checkValentineDay() {
+         // 修改后的日期检查逻辑
+         function checkValentineDay() {
             const today = new Date();
-            // 检查是否是2025年2月14日或之后
-            if (today.getFullYear() === 2025 && 
-                today.getMonth() === 1 && 
-                today.getDate() === 14) {
+            const valentine = new Date(2025, 1, 14); // 月份从0开始
+            
+            // 检查是否在情人节当天
+            if (today >= valentine && today <= new Date(2025, 1, 15)) {
                 showModal();
+                // 添加页面点击监听（用于解决浏览器自动播放限制）
+                document.addEventListener('click', function autoPlay() {
+                    document.getElementById('valentine-music').play();
+                    document.removeEventListener('click', autoPlay);
+                });
             }
         }
 
-        function showModal() {
+      // 修改后的弹窗控制函数
+      function showModal() {
             const modal = document.getElementById('valentine-modal');
+            const music = document.getElementById('valentine-music');
+            
             modal.style.display = 'flex';
+            // 处理浏览器自动播放限制
+            music.play().catch(error => {
+                console.log('需要用户交互后自动播放');
+                document.addEventListener('click', () => music.play(), { once: true });
+            });
         }
 
         function closeModal() {
             const modal = document.getElementById('valentine-modal');
+            const music = document.getElementById('valentine-music');
+            
             modal.style.display = 'none';
+            music.pause();
+            music.currentTime = 0; // 重置播放进度
         }
+
 
         // 绑定关闭事件
         document.querySelector('.close-btn').addEventListener('click', closeModal);
@@ -290,13 +315,12 @@
             "感觉哥哥今天在工作中能发现很多乐趣，说不定还能解锁新的工作技能🔓",
             "工作再忙，哥哥也要抽时间偷个懒，劳逸结合，效率翻倍💯",
             "哥哥，你就像一本职场秘籍，每一页都写满了优秀，今天继续书写精彩📖",
-            "哥哥，听说工作中的你魅力值会爆表，不知道今天会迷倒多少人呀🤣",
+            "听说工作中的你魅力值会爆表，不知道今天会迷倒多少人呀🤣",
             "上班就像一场冒险，哥哥你肯定能带着满满的收获，平安‘归来’🎈",
-            "哥哥，要是今天工作完成得又快又好，晚上奖励自己看一场喜欢的电影⚽",
+            "要是今天工作完成得又快又好，晚上奖励自己看一场喜欢的电影⚽",
             "你就像工作上的小旋风，风风火火，把所有任务都迅速搞定💨",
-            "感觉哥哥今天能在工作中结识很多有趣的朋友，拓展自己的人脉圈📱",
+            "今天能在工作中结识很多有趣的朋友，拓展自己的人脉圈📱",
             "工作再辛苦，想想我们的未来，哥哥你肯定能一鼓作气，勇往直前🚀",
-            "哥哥，你就像工作里的开心果，走到哪都能带来欢声笑语，今天也别忘了逗逗大家😄",
             "要是今天工作累了，就想想晚上的放松时光，洗个热水澡，吃点零食，美滋滋🛀",
             "哥哥，听说工作认真的人会自带光芒，你今天肯定是3号线最亮的仔🌟",
             "上班的时候别太紧绷啦，适当放松，说不定还能创造出意想不到的成绩🎉",
@@ -425,7 +449,7 @@
             
             document.getElementById('date-picker').value = dateString;
             document.getElementById('date-picker').dispatchEvent(new Event('change'));
-         
+            // showModal()
         });
     </script>
 
