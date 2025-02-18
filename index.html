@@ -328,9 +328,9 @@
             "你就像工作上的小旋风，风风火火，把所有任务都迅速搞定💨",
             "今天能在工作中结识很多有趣的朋友，拓展自己的人脉圈📱",
             "工作再辛苦，想想我们的未来，哥哥你肯定能一鼓作气，勇往直前🚀",
-            "要是今天工作累了，就想想晚上的放松时光，洗个热水澡，吃点零食，美滋滋🛀",
+            "要是今天工作累了，就想想晚上的轻松时光，洗个热水澡，吃点零食，美滋滋🛀",
             "哥哥，听说工作认真的人会自带光芒，你今天肯定是3号线最亮的仔🌟",
-            "上班的时候别太紧绷啦，适当放松，说不定还能创造出意想不到的成绩🎉",
+            "上班的时候别太紧绷啦，适当偷懒，说不定还能创造出意想不到的成绩🎉",
             "你就是工作上的魔法师，总能把复杂的事情变得简单又有趣🧙",
             "记得吃早餐哦，一天的能量从早餐开始🥪",
             "夜班虽然辛苦，但想到下班后的自由时光就充满期待🌙,早点睡觉觉",
@@ -344,9 +344,9 @@
             "休息的时候记得多运动去打打篮球，保持健康🏃‍♂️",
             "记得多喝水，保持水分💧 活力满满",
             "休息日就是要好好享受，去爬山吧 九顶山怎么样 哈哈⛰️",
-            "下班后一起去吃羊肉串吧，享受美食🍖",
-            "工作再忙，也别忘了吃早餐哦，吃饱了才有力气工作🥪",
-            "要是今天工作完成得早，就早点回家休息吧，我等你🏠",
+            "今天又是白班哟，下班后一起去吃羊肉串吧，享受美食🍖",
+            "早班起床再忙，也别忘了吃早餐哦，吃饱了才有力气工作🥪",
+            "要是今天工作完成得早，就早点回家吧，我等你🏠",
             "上班的时候要记得多喝水，保持好状态哦🥤",
             "要是工作压力太大，就找我倾诉倾诉，我一直在这里陪着你🤗",
             "要是今天工作遇到难题了，别着急，慢慢解决，我相信你💪",
@@ -357,14 +357,15 @@
             "掐指一算，嗯 今天又是个出门捡钱的好日子",
             "掐指一算，嗯 我们家快暴富了  哇哈哈哈",
             "天大地大 小家最大，咱们一起努力，未来可期🏠",
-         
+            "又是好好休息的一天，看看是去钓鱼咧还是钓鱼咧  哈哈",
+
         ];
 
 
 
 
 
-        const shiftOrder = ['休息','白班', '夜班', '早班', ];
+        const shiftOrder = ['休息', '白班', '夜班', '早班',];
         const startYear = 2025;
         const baseDate = new Date('2025-01-01');
 
@@ -393,6 +394,7 @@
 
             return shiftOrder[daysDiff % shiftOrder.length];
         }
+
         document.getElementById('date-picker').addEventListener('change', function () {
             const selectedDate = new Date(this.value);
             generateCalendar(selectedDate);
@@ -402,21 +404,65 @@
 
             updateHighlight(dateString);
 
-            const filtered = sweetSentences.filter(s => s.includes(shift));
-            const available = filtered.length ? filtered : sweetSentences;
-            const randomIndex = Math.floor(Math.random() * available.length);
+            let message;
             const daysSinceMeeting = Math.floor((new Date() - new Date('2020-05-20')) / 86400000);
-            let message = available[randomIndex].replace(/\${days}/g, daysSinceMeeting);
 
             if (festivals[dateString]) {
+                // 节日逻辑保持不变
                 const festival = festivals[dateString];
                 const wishes = festivalWishes[festival];
                 message = wishes[Math.floor(Math.random() * wishes.length)];
+            } else {
+                // 修改消息选择逻辑
+                if (shift === '休息') {
+                    // 休息班次时只匹配休息相关消息
+                    const restMessages = sweetSentences.filter(sentence =>
+                        sentence.includes('休息') ||
+                        sentence.includes('放松') ||
+                        sentence.includes('睡到自然醒') ||
+                        sentence.includes('运动')
+                    );
+                    message = restMessages[Math.floor(Math.random() * restMessages.length)];
+                } else {
+                    // 其他班次保持原有的80/20概率逻辑
+                    const shiftSpecificMessages = sweetSentences.filter(sentence => {
+                        switch (shift) {
+                            case '早班':
+                                return sentence.includes('早班') || sentence.includes('日出');
+                            case '白班':
+                                return sentence.includes('白班');
+                            case '夜班':
+                                return sentence.includes('夜班') || sentence.includes('宵夜');
+                            default:
+                                return false;
+                        }
+                    });
+
+                    const genericMessages = sweetSentences.filter(sentence => {
+                        return !sentence.includes('早班') &&
+                            !sentence.includes('白班') &&
+                            !sentence.includes('夜班') &&
+                            !sentence.includes('休息') &&
+                            !sentence.includes('日出') &&
+                            !sentence.includes('宵夜');
+                    });
+
+                    // 保持80/20概率
+                    if (shiftSpecificMessages.length > 0 && Math.random() < 0.2) {
+                        message = shiftSpecificMessages[Math.floor(Math.random() * shiftSpecificMessages.length)];
+                    } else {
+                        message = genericMessages[Math.floor(Math.random() * genericMessages.length)];
+                    }
+                }
             }
+
+            // 替换消息中的变量
+            message = message.replace(/\${days}/g, daysSinceMeeting);
 
             document.getElementById('shift-result').innerHTML =
                 `📅${dateString} 班次：${shift}<br><br>💌${message}`;
         });
+
 
         function generateCalendar(selectedDate) {
             const container = document.getElementById('annual-shift-container');
